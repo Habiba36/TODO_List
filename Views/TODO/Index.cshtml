@@ -1,0 +1,36 @@
+﻿@model List<ToDo>
+
+<h1>To-Do List</h1>
+
+@using (Html.BeginForm("Add", "Todo", FormMethod.Post))
+{
+    <input type="text" name="title" required />
+    <button type="submit">Add</button>
+}
+
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>
+            <input type="checkbox" name="isCompleted" value="@item.Id" @(item.IsCompleted ? "checked" : "") onchange="this.form.submit()" />
+            <span style="@(item.IsCompleted ? "text-decoration: line-through;" : "")">@item.Title</span>
+            <button type="button" onclick="deleteItem(@item.Id)">Delete</button>
+        </li>
+    }
+</ul>
+
+<script>
+    function deleteItem(id) {
+        $.ajax({
+            url: '@Url.Action("Delete", "Todo")',
+            type: 'POST',
+            data: { id: id },
+            success: function (result) {
+                location.reload(); // Refresh the page after successful deletion
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+</script>
